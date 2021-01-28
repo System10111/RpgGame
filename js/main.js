@@ -37,8 +37,8 @@ function initialise()
     // create a canvas
     canvas = document.createElement("canvas");
     canvas.style = "border:2px solid #000000;"
-    canvas.width = 500;
-    canvas.height = 500;
+    canvas.width = 1375;
+    canvas.height = 632;
     camera.pos.x=-(canvas.width-50)/2
     camera.pos.y= -(canvas.height-50)/2
 
@@ -49,7 +49,7 @@ function initialise()
     
     // create an image and add it to the list of loaded images
     imgs["theFirst"] = loadImage("img/theFirst.png");
-    imgs["background"] = loadImage("img/map.png");
+    imgs["background"] = loadImage("img/BackgroundN1.png");
 }
 
 function cameraDraw(image,x,y){
@@ -98,7 +98,7 @@ function mainLoop(time)
     
     // draw the image we created
     //ctx.drawImage(imgs["theFirst"], player.pos.x, player.pos.y, 100, 100);
-    cameraDraw(imgs["background"], -120 , -200)
+    cameraDraw(imgs["background"], -2220 , -3000)
     cameraDraw(imgs["theFirst"], player.pos.x, player.pos.y);
 
     // OTHER:
