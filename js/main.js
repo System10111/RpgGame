@@ -13,6 +13,12 @@ let player = {
         y:10
     }
 }
+let camera = {
+    pos: {
+        x:0,
+        y:0
+    }
+}
 
 // function that loads an image
 function loadImage(file)
@@ -33,6 +39,8 @@ function initialise()
     canvas.style = "border:2px solid #000000;"
     canvas.width = 500;
     canvas.height = 500;
+    camera.pos.x=-(canvas.width-50)/2
+    camera.pos.y= -(canvas.height-50)/2
 
     document.body.appendChild(canvas);
 
@@ -41,6 +49,13 @@ function initialise()
     
     // create an image and add it to the list of loaded images
     imgs["theFirst"] = loadImage("img/theFirst.png");
+    imgs["background"] = loadImage("img/map.png");
+}
+
+function cameraDraw(image,x,y){
+    x-=camera.pos.x
+    y-=camera.pos.y
+    ctx.drawImage(image, x, y);
 }
 
 let lastTime = 0;
@@ -58,15 +73,19 @@ function mainLoop(time)
     // check pressed keys
     if (kKeys["W".charCodeAt(0)]) {
         player.pos.y -= 150 * deltaT;
+        camera.pos.y -= 150 * deltaT;
     }
     if (kKeys["S".charCodeAt(0)]) {
         player.pos.y += 150 * deltaT;
+        camera.pos.y += 150 * deltaT;
     }
     if (kKeys["A".charCodeAt(0)]) {
         player.pos.x -= 150 * deltaT;
+        camera.pos.x -= 150 * deltaT;
     }
     if (kKeys["D".charCodeAt(0)]) {
         player.pos.x += 150 * deltaT;
+        camera.pos.x += 150 * deltaT;
     }
 
     // DRAWING (we should probably move this code to a separate function later):
@@ -78,7 +97,9 @@ function mainLoop(time)
     ctx.restore();
     
     // draw the image we created
-    ctx.drawImage(imgs["theFirst"], player.pos.x, player.pos.y, 100, 100);
+    //ctx.drawImage(imgs["theFirst"], player.pos.x, player.pos.y, 100, 100);
+    cameraDraw(imgs["background"], -120 , -200)
+    cameraDraw(imgs["theFirst"], player.pos.x, player.pos.y);
 
     // OTHER:
 
