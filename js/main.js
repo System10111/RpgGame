@@ -8,6 +8,7 @@ let ctx = undefined;
 let kKeys = {};
 // player data
 let player = {
+    lookingRight: true,
     // the animations of the player
     anims: {
         time: 0.0,
@@ -67,7 +68,7 @@ function animationFrame(anim, t) {
         t %= anim.frames.length;
     }
     // get the correct frame
-    return anim.frames[Math.floor(t)];
+    return anim.frames[Math.min(Math.floor(t), anim.frames.length - 1)];
 }
 
 // update the canvas size and everything associated with it
@@ -114,10 +115,17 @@ function initialise() {
     ], 7, true); 
 }
 
-function cameraDraw(image,x,y){
+function cameraDraw(image, x, y, mirrorH = false) {
     x-=camera.pos.x
     y-=camera.pos.y
-    ctx.drawImage(image, x, y);
+    if (mirrorH) {
+        ctx.save(); // Save the current state
+        ctx.scale(-1, 1); // Set scale to flip the image
+        ctx.drawImage(image, -x, y, image.width*-1, image.height);
+        ctx.restore(); // Restore the last saved state
+    } else {
+        ctx.drawImage(image, x, y);
+    }
 }
 
 let lastTime = 0;
@@ -153,11 +161,13 @@ function mainLoop(time)
     if (kKeys["A".charCodeAt(0)]) {
         player.pos.x -= 150 * deltaT;
         camera.pos.x -= 150 * deltaT;
+        player.lookingRight = false;
         walking = true;
     }
     if (kKeys["D".charCodeAt(0)]) {
         player.pos.x += 150 * deltaT;
         camera.pos.x += 150 * deltaT;
+        player.lookingRight = true;
         walking = true;
     }
 
@@ -171,14 +181,14 @@ function mainLoop(time)
     
     // draw the image we created
     //ctx.drawImage(imgs["theFirst"], player.pos.x, player.pos.y, 100, 100);
-    cameraDraw(imgs["background"], -2220 , -3000)
+    cameraDraw(imgs["background"], -2220 , -3000, false)
     if(walking) {
-        cameraDraw( animationFrame(player.anims.walk, player.anims.time), player.pos.x, player.pos.y);
+        cameraDraw( animationFrame(player.anims.walk, player.anims.time), player.pos.x, player.pos.y, !player.lookingRight);
     } else {
         // !!!TEMPORARY!!! when it starts walking it should be from the beginning
         player.anims.time = 0.0
         // !!!TEMPORARY!!!
-        cameraDraw( animationFrame(player.anims.stand, player.anims.time), player.pos.x, player.pos.y);
+        cameraDraw( animationFrame(player.anims.stand, player.anims.time), player.pos.x, player.pos.y, !player.lookingRight);
     }
 
     // OTHER:
