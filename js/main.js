@@ -70,17 +70,28 @@ function animationFrame(anim, t) {
     return anim.frames[Math.floor(t)];
 }
 
+// update the canvas size and everything associated with it
+function updateCanvasSize()
+{
+    canvas.width  = window.innerWidth;
+    canvas.height = window.innerHeight;
+    
+    camera.pos.x= player.pos.x -(canvas.width)/2 + 25
+    camera.pos.y= player.pos.y -(canvas.height)/2 + 25
+}
+
 // initialise the game
 function initialise() {
     // create a canvas
     canvas = document.createElement("canvas");
-    canvas.style = "border:2px solid #000000;"
-    canvas.width = 1375;
-    canvas.height = 632;
-    camera.pos.x=-(canvas.width-50)/2
-    camera.pos.y= -(canvas.height-50)/2
+    // canvas.style = "border:2px solid #000000;"
+    document.body.style = "width: 100%; height: 100%; margin: 0; overflow: hidden;";
+
+    updateCanvasSize();
 
     document.body.appendChild(canvas);
+    
+    
 
     // get its context
     ctx = canvas.getContext("2d");
@@ -182,6 +193,7 @@ window.onload = function() {
     mainLoop(0.0);
 }
 
-// detect pressed keys
 window.onkeyup = function(e) { kKeys[e.keyCode] = false; }
 window.onkeydown = function(e) { kKeys[e.keyCode] = true; }
+window.onresize = updateCanvasSize;
+// detect pressed keys
