@@ -13,8 +13,10 @@ let player = {
     anims: {
         time: 0.0,
         stand: undefined,
-        walk: undefined
+        walk: undefined,
+        attack: undefined
     },
+    currentAnim: "stand",
     pos: {
         x: 10,
         y: 10
@@ -113,6 +115,12 @@ function initialise() {
         "img/human1-move-4.png",
         "img/human1-move-5.png",
     ], 7, true); 
+    player.anims.attack = createAnimation([
+        "img/sword-human.png",
+        "img/sword-human-1.png",
+        "img/sword-human-2.png",
+        "img/sword-human-3.png",
+    ], 10, true); 
 }
 
 function cameraDraw(image, x, y, mirrorH = false) {
@@ -148,27 +156,45 @@ function mainLoop(time)
     // !!!TEMPORARY!!!
 
     // check pressed keys
-    if (kKeys["W".charCodeAt(0)]) {
-        player.pos.y -= 150 * deltaT;
-        camera.pos.y -= 150 * deltaT;
-        walking = true;
-    }
-    if (kKeys["S".charCodeAt(0)]) {
-        player.pos.y += 150 * deltaT;
-        camera.pos.y += 150 * deltaT;
-        walking = true;
-    }
-    if (kKeys["A".charCodeAt(0)]) {
-        player.pos.x -= 150 * deltaT;
-        camera.pos.x -= 150 * deltaT;
-        player.lookingRight = false;
-        walking = true;
-    }
-    if (kKeys["D".charCodeAt(0)]) {
-        player.pos.x += 150 * deltaT;
-        camera.pos.x += 150 * deltaT;
-        player.lookingRight = true;
-        walking = true;
+    if(player.currentAnim == "attack") {
+        if(player.anims.time > player.anims.attack.frames.length / player.anims.attack.fps)
+            player.currentAnim = "stand"
+    } else {
+        if (kKeys["W".charCodeAt(0)]) {
+            player.pos.y -= 150 * deltaT;
+            camera.pos.y -= 150 * deltaT;
+            walking = true;
+        }
+        if (kKeys["S".charCodeAt(0)]) {
+            player.pos.y += 150 * deltaT;
+            camera.pos.y += 150 * deltaT;
+            walking = true;
+        }
+        if (kKeys["A".charCodeAt(0)]) {
+            player.pos.x -= 150 * deltaT;
+            camera.pos.x -= 150 * deltaT;
+            player.lookingRight = false;
+            walking = true;
+        }
+        if (kKeys["D".charCodeAt(0)]) {
+            player.pos.x += 150 * deltaT;
+            camera.pos.x += 150 * deltaT;
+            player.lookingRight = true;
+            walking = true;
+        }
+        if (kKeys["F".charCodeAt(0)]) {
+            player.currentAnim = "attack";
+            player.anims.time = 0.0
+        } else {
+            if(walking) {
+                player.currentAnim = "walk"
+            } else {
+                // !!!TEMPORARY!!! when it starts walking it should be from the beginning
+                player.anims.time = 0.0
+                // !!!TEMPORARY!!!
+                player.currentAnim = "stand"
+            }
+        }
     }
 
     // DRAWING (we should probably move this code to a separate function later):
@@ -182,14 +208,8 @@ function mainLoop(time)
     // draw the image we created
     //ctx.drawImage(imgs["theFirst"], player.pos.x, player.pos.y, 100, 100);
     cameraDraw(imgs["background"], -2220 , -3000, false)
-    if(walking) {
-        cameraDraw( animationFrame(player.anims.walk, player.anims.time), player.pos.x, player.pos.y, !player.lookingRight);
-    } else {
-        // !!!TEMPORARY!!! when it starts walking it should be from the beginning
-        player.anims.time = 0.0
-        // !!!TEMPORARY!!!
-        cameraDraw( animationFrame(player.anims.stand, player.anims.time), player.pos.x, player.pos.y, !player.lookingRight);
-    }
+    
+    cameraDraw( animationFrame(player.anims[player.currentAnim], player.anims.time), player.pos.x, player.pos.y, !player.lookingRight);
 
     // OTHER:
 
