@@ -18,8 +18,8 @@ let player = {
     },
     currentAnim: "stand",
     pos: {
-        x: 10,
-        y: 10
+        x: 20,
+        y: 20
     }
 }
 let camera = {
@@ -100,7 +100,6 @@ function initialise() {
     ctx = canvas.getContext("2d");
     
     // create an image and add it to the list of loaded images
-    imgs["theFirst"] = loadImage("img/theFirst.png");
     imgs["background"] = loadImage("img/BackgroundN1.png");
     // load the animations for the player
     player.anims.time = 0.0;
